@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AdvancedOgreFramework.hpp"
+#include "Framework.h"
 
 class AppState;
 

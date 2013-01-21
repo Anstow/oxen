@@ -10,21 +10,21 @@ OxenApp::OxenApp() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-OxenApp::~DemoApp() {
+OxenApp::~OxenApp() {
 	delete m_pAppStateManager;
 	// If the applictation closes we need to close ogre correctly
-	delete OgreFramework::getSnigletonPtr();
+	delete Framework::getSingletonPtr();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void OxenApp::startApp() {
-	new OgreFramework();
-	if (!OgreFramework::getSnigletonPtr()->initOgre("Oxen", 0, 0)) {
+	new Framework();
+	if (!Framework::getSingletonPtr()->initOgre("Oxen", 0, 0)) {
 		return;
 	}
 	
-	OgreFramework::getSnigletonPtr()->m_pLog->logMessage("Oxen initialized");
+	Framework::getSingletonPtr()->m_pLog->logMessage("Oxen initialized");
 
 	m_pAppStateManager = new AppStateManager();
 

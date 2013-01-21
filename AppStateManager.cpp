@@ -1,4 +1,4 @@
-#include "AppStateManager.hpp"
+#include "AppStateManager.h"
 
 #include <OgreWindowEventUtilities.h>
 
@@ -80,29 +80,29 @@ void AppStateManager::start(AppState* state)
 	while(!m_bShutdown)
 	{
 		// We need to close if the window is closed.
-		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isClosed())m_bShutdown = true;
+		if(Framework::getSingletonPtr()->m_pRenderWnd->isClosed())m_bShutdown = true;
 
 		Ogre::WindowEventUtilities::messagePump();
 
 		// We only run the main game loop if the window is active
-		if(OgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
+		if(Framework::getSingletonPtr()->m_pRenderWnd->isActive())
 		{
 			// Sets the start time of the frame
-			startTime = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
+			startTime = Framework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
 
 			// Captures input
-			OgreFramework::getSingletonPtr()->m_pKeyboard->capture();
-			OgreFramework::getSingletonPtr()->m_pMouse->capture();
+			Framework::getSingletonPtr()->m_pKeyboard->capture();
+			Framework::getSingletonPtr()->m_pMouse->capture();
 
 			// Updates the state on the top of the stack
 			m_ActiveStateStack.back()->update(timeSinceLastFrame);
 
 			// Updates OGRE and the graphics
-			OgreFramework::getSingletonPtr()->updateOgre(timeSinceLastFrame);
-			OgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
+			Framework::getSingletonPtr()->updateOgre(timeSinceLastFrame);
+			Framework::getSingletonPtr()->m_pRoot->renderOneFrame();
 
 			// Sets the time since the last frame.
-			timeSinceLastFrame = OgreFramework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - startTime;
+			timeSinceLastFrame = Framework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - startTime;
 		}
 		else 
 		{
@@ -115,7 +115,7 @@ void AppStateManager::start(AppState* state)
 		}
 	}
 
-	OgreFramework::getSingletonPtr()->m_pLog->logMessage("Main loop quit");
+	Framework::getSingletonPtr()->m_pLog->logMessage("Main loop quit");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,9 +193,9 @@ void AppStateManager::shutdown()
 
 void AppStateManager::init(AppState* state)
 {
-    OgreFramework::getSingletonPtr()->m_pKeyboard->setEventCallback(state);
-	OgreFramework::getSingletonPtr()->m_pMouse->setEventCallback(state);
-    OgreFramework::getSingletonPtr()->m_pTrayMgr->setListener(state);
+    Framework::getSingletonPtr()->m_pKeyboard->setEventCallback(state);
+	Framework::getSingletonPtr()->m_pMouse->setEventCallback(state);
+    Framework::getSingletonPtr()->m_pTrayMgr->setListener(state);
 
-	OgreFramework::getSingletonPtr()->m_pRenderWnd->resetStatistics();
+	Framework::getSingletonPtr()->m_pRenderWnd->resetStatistics();
 }

@@ -18,6 +18,9 @@ public:
 	 * @brief This deals with entering the main menu
 	 */
 	void enter();
+	/**
+	 * @brief This creates te
+	 */
 	void createScene();
 	void exit();
 

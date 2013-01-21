@@ -4,7 +4,7 @@ using namespace Ogre;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<> Framework* Ogre::Singleton<Framework>::ms_Singleton = 0;
+template<> Framework* Ogre::Singleton<Framework>::msSingleton = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ Framework::Framework() {
 }
 
 Framework::~Framework() {
-	OgreFramework::getSnigletonPtr()->m_pLog->logMessage("Shutdown OGRE...");
+	Framework::getSingletonPtr()->m_pLog->logMessage("Shutdown OGRE...");
 	if (m_pTrayMgr) delete m_pTrayMgr;
 	if (m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
 	if (m_pRoot) delete m_pRoot;
