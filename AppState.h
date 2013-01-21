@@ -57,10 +57,6 @@ public:
 	 */
 	virtual void popAppState() = 0;
 	/**
-	 * @brief Pauses the current state.
-	 */
-	virtual void pauseAppState() = 0;
-	/**
 	 * @brief Shutsdown the applictation
 	 */
 	virtual void shutdown() = 0;
