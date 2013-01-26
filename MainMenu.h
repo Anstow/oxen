@@ -15,13 +15,17 @@ public:
 	DECLARE_APPSTATE_CLASS(MainMenu)
 
 	/**
-	 * @brief This deals with entering the main menu
+	 * @brief This deals with entering the main menu, setting up the camera and
+	 * resetting the game stats
 	 */
 	void enter();
 	/**
-	 * @brief This creates te
+	 * @brief Fills the scene with content
 	 */
 	void createScene();
+	/**
+	 * @brief Destroys the camera and the SceneManager and the GUI elements
+	 */
 	void exit();
 
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
@@ -31,6 +35,11 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 
+	/**
+	 * @brief Handles buttons being pressed
+	 *
+	 * @param button The pressed button
+	 */
 	void buttonHit(OgreBites::Button* button);
 
 	void update(double timeSinceLastFrame);

@@ -129,6 +129,7 @@ set(HDRS
 set(SRCS
 	AppStateManager.cpp
 	Framework.cpp
+	MainMenu.cpp
 	main.cpp
 	OxenApp.cpp
 )

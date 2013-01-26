@@ -4,15 +4,13 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AppStateManager::AppStateManager()
-{
+AppStateManager::AppStateManager() {
 	m_bShutdown = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AppStateManager::~AppStateManager()
-{
+AppStateManager::~AppStateManager() {
 	state_info si;
 
 	// Clears all the running states
@@ -33,8 +31,7 @@ AppStateManager::~AppStateManager()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::manageAppState(Ogre::String stateName, AppState* state)
-{
+void AppStateManager::manageAppState(Ogre::String stateName, AppState* state) {
 	// Try to create a new state preloaded state
 	// TODO: Do I really need to preload states?
 	try
@@ -53,8 +50,7 @@ void AppStateManager::manageAppState(Ogre::String stateName, AppState* state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AppState* AppStateManager::findByName(Ogre::String stateName)
-{
+AppState* AppStateManager::findByName(Ogre::String stateName) {
 	std::vector<state_info>::iterator itr;
 
 	for(itr=m_States.begin();itr!=m_States.end();itr++)
@@ -68,8 +64,7 @@ AppState* AppStateManager::findByName(Ogre::String stateName)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::start(AppState* state)
-{
+void AppStateManager::start(AppState* state) {
 	// Open the specified state
 	changeAppState(state);
 
@@ -120,40 +115,40 @@ void AppStateManager::start(AppState* state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::changeAppState(AppState* state)
-{
-	if(!m_ActiveStateStack.empty())
-	{
-		m_ActiveStateStack.back()->exit();
-		m_ActiveStateStack.pop_back();
-	}
+void AppStateManager::changeAppState(AppState* state) {
+	if (state) {
+		if(!m_ActiveStateStack.empty()) {
+			m_ActiveStateStack.back()->exit();
+			m_ActiveStateStack.pop_back();
+		}
 
-	m_ActiveStateStack.push_back(state);
-	init(state);
-	m_ActiveStateStack.back()->enter();
+		m_ActiveStateStack.push_back(state);
+		init(state);
+		m_ActiveStateStack.back()->enter();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool AppStateManager::pushAppState(AppState* state)
-{
-	if(!m_ActiveStateStack.empty())
-	{
-		if(!m_ActiveStateStack.back()->pause())
-			return false;
+bool AppStateManager::pushAppState(AppState* state) {
+	if (state) {
+		if(!m_ActiveStateStack.empty()) {
+			if(!m_ActiveStateStack.back()->pause())
+				return false;
+		}
+
+		m_ActiveStateStack.push_back(state);
+		init(state);
+		m_ActiveStateStack.back()->enter();
+
+		return true;
 	}
-
-	m_ActiveStateStack.push_back(state);
-	init(state);
-	m_ActiveStateStack.back()->enter();
-
-	return true;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::popAppState()
-{
+void AppStateManager::popAppState() {
 	if(!m_ActiveStateStack.empty())
 	{
 		m_ActiveStateStack.back()->exit();
@@ -171,28 +166,27 @@ void AppStateManager::popAppState()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::popAllAndPushAppState(AppState* state)
-{
-    while(!m_ActiveStateStack.empty())
-    {
-        m_ActiveStateStack.back()->exit();
-        m_ActiveStateStack.pop_back();
-    }
+void AppStateManager::popAllAndPushAppState(AppState* state) {
+	if (state) {
+		while(!m_ActiveStateStack.empty())
+		{
+			m_ActiveStateStack.back()->exit();
+			m_ActiveStateStack.pop_back();
+		}
 
-    pushAppState(state);
+		pushAppState(state);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::shutdown()
-{
+void AppStateManager::shutdown() {
 	m_bShutdown = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void AppStateManager::init(AppState* state)
-{
+void AppStateManager::init(AppState* state) {
     Framework::getSingletonPtr()->m_pKeyboard->setEventCallback(state);
 	Framework::getSingletonPtr()->m_pMouse->setEventCallback(state);
     Framework::getSingletonPtr()->m_pTrayMgr->setListener(state);

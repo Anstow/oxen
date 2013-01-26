@@ -41,8 +41,9 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
  
 	// TODO: replace the config dialog on start up by some default settings and in game menu
 	// show the config dialog
-    if(!m_pRoot->showConfigDialog())
+    if(!m_pRoot->restoreConfig() && !m_pRoot->showConfigDialog()) {
         return false;
+	}
 	// create the render window
     m_pRenderWnd = m_pRoot->initialise(true, wndTitle);
  
