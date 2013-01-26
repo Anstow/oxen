@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Framework.h"
+#include "MenuManager.h"
 
 class AppState;
 
@@ -10,7 +11,7 @@ class AppState;
  * @brief This will be inherited by the applictation state manager, but in
  * used in App State and so must be defined here
  */
-class AppStateListener
+class AppStateListener : public MenuManager
 {
 public:
 	/**
@@ -127,14 +128,14 @@ protected:
 	 *
 	 * @return The state found.
 	 */
-	AppState* findByName(Ogre::String stateName){return m_pParent->findByName(stateName);}
+	inline AppState* findByName(Ogre::String stateName){return m_pParent->findByName(stateName);}
 	/**
 	 * @brief Handle to the parents changeAppState
 	 *
 	 * @param state The state to change to
 	 * @see AppStateListener::changeAppState()
 	 */
-	void changeAppState(AppState* state){m_pParent->changeAppState(state);}
+	inline void changeAppState(AppState* state){m_pParent->changeAppState(state);}
 	/**
 	 * @brief Handle to the parents pushAppState
 	 *
@@ -143,23 +144,39 @@ protected:
 	 * @return the success of pushing the state
 	 * @see AppStateListener::pushAppState()
 	 */
-	bool pushAppState(AppState* state){return m_pParent->pushAppState(state);}
+	inline bool pushAppState(AppState* state){return m_pParent->pushAppState(state);}
 	/**
 	 * @brief Pops the last state (probably this one)
 	 * @see AppStateListener::popAppState()
 	 */
-	void popAppState(){m_pParent->popAppState();}
-	/**
-	 * @brief Shuts down the game
-	 */
-	void shutdown(){m_pParent->shutdown();}
+	inline void popAppState(){m_pParent->popAppState();}
 	/**
 	 * @brief Handle tho the parents popAllAndPushAppState
 	 *
 	 * @param state The state to add.
 	 * @see AppStateListener::popAllAndPushAppState()
 	 */
-    void popAllAndPushAppState(AppState* state){m_pParent->popAllAndPushAppState(state);}
+    inline void popAllAndPushAppState(AppState* state){m_pParent->popAllAndPushAppState(state);}
+
+	/**
+	 * @brief This pushes a Menu onto the stack
+	 *
+	 * @param pMenu The menu to add to the stack
+	 */
+	inline void pushMenu(CEGUI::Window* pMenu) { m_pParent->pushMenu(pMenu); }
+	/**
+	 * @brief This removes the menu from the top of the stack
+	 */
+	inline void popMenu() { m_pParent->popMenu(); }
+	/**
+	 * @brief This removes all of the menus from the stack
+	 */
+	inline void popAllMenus() { m_pParent->popAllMenus(); }
+	
+	/**
+	 * @brief Shuts down the game
+	 */
+	void shutdown(){m_pParent->shutdown();}
 
 	AppStateListener* m_pParent;
 

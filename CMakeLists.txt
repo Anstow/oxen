@@ -107,7 +107,8 @@ endif()
 #}}}
 
 #{{{ Find the CEGUI libraries and include directories 
-# find_package(CEGUI REQUIRED COMPONENTS Ogre)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules;${CMAKE_MODULE_PATH}")
+find_package(CEGUI REQUIRED COMPONENTS Ogre)
 
 # If we find the CEGUI libraries and include directories add them to the project
 if(CEGUI_FOUND)
@@ -123,6 +124,7 @@ set(HDRS
 	AppStateManager.h
 	Framework.h
 	MainMenu.h
+	MenuManager.h
 	OxenApp.h
 )
  
@@ -131,6 +133,7 @@ set(SRCS
 	Framework.cpp
 	MainMenu.cpp
 	main.cpp
+	MenuManager.cpp
 	OxenApp.cpp
 )
 #}}}

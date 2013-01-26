@@ -24,7 +24,10 @@
 /**
  * @brief This initialized ogre and catches the input for the game
  */
-class Framework : public Ogre::Singleton<Framework>, OIS::KeyListener, OIS::MouseListener 
+class Framework : public
+				  Ogre::Singleton<Framework>,
+				  OIS::KeyListener,
+				  OIS::MouseListener 
 {
 public:
 	/**

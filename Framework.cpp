@@ -108,6 +108,9 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
 	// Create and start our timer for timing between frames 
     m_pTimer = new Ogre::Timer();
     m_pTimer->reset();
+	
+	// Attach the render window 
+	
  
 	// Put the window in the foreground?
     m_pRenderWnd->setActive(true);

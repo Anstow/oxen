@@ -29,7 +29,7 @@ void MainMenu::enter() {
 	Framework::getSingletonPtr()->m_pTrayMgr->destroyAllWidgets();
 	Framework::getSingletonPtr()->m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
 	Framework::getSingletonPtr()->m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-	Framework::getSingletonPtr()->m_pTrayMgr->showCursor();
+	Framework::getSingletonPtr()->m_pTrayMgr->hideCursor();
 
 	// Create the buttons TODO:we should do this in createScene and using CEGUI
 	Framework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_CENTER, "EnterBtn", "Enter GameState", 250);
@@ -100,8 +100,7 @@ bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
  
 ////////////////////////////////////////////////////////////////////////////////
  
-bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
-{
+bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
     if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt, id)) {
 		return true;
 	}
@@ -110,8 +109,7 @@ bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void MainMenu::update(double timeSinceLastFrame)
-{
+void MainMenu::update(double timeSinceLastFrame) {
     m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     Framework::getSingletonPtr()->m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
  
@@ -124,8 +122,7 @@ void MainMenu::update(double timeSinceLastFrame)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void MainMenu::buttonHit(OgreBites::Button *button)
-{
+void MainMenu::buttonHit(OgreBites::Button *button) {
     if(button->getName() == "ExitBtn")
         m_bQuit = true;
     else if(button->getName() == "EnterBtn")

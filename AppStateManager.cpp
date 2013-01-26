@@ -14,15 +14,13 @@ AppStateManager::~AppStateManager() {
 	state_info si;
 
 	// Clears all the running states
-    while(!m_ActiveStateStack.empty())
-	{
+    while(!m_ActiveStateStack.empty()) {
 		m_ActiveStateStack.back()->exit();
 		m_ActiveStateStack.pop_back();
 	}
 
 	// Removes the preloaded states
-	while(!m_States.empty())
-	{
+	while(!m_States.empty()) {
 		si = m_States.back();
         si.state->destroy();
         m_States.pop_back();
@@ -34,15 +32,12 @@ AppStateManager::~AppStateManager() {
 void AppStateManager::manageAppState(Ogre::String stateName, AppState* state) {
 	// Try to create a new state preloaded state
 	// TODO: Do I really need to preload states?
-	try
-	{
+	try {
 		state_info new_state_info;
 		new_state_info.name = stateName;
 		new_state_info.state = state;
 		m_States.push_back(new_state_info);
-	}
-	catch(std::exception& e)
-	{
+	} catch(std::exception& e) {
 		delete state;
 		throw Ogre::Exception(Ogre::Exception::ERR_INTERNAL_ERROR, "Error while trying to manage a new AppState\n" + Ogre::String(e.what()), "AppStateManager.cpp (41)");
 	}
@@ -53,8 +48,7 @@ void AppStateManager::manageAppState(Ogre::String stateName, AppState* state) {
 AppState* AppStateManager::findByName(Ogre::String stateName) {
 	std::vector<state_info>::iterator itr;
 
-	for(itr=m_States.begin();itr!=m_States.end();itr++)
-	{
+	for(itr=m_States.begin();itr!=m_States.end();itr++) {
 		if(itr->name==stateName)
 			return itr->state;
 	}
@@ -72,16 +66,16 @@ void AppStateManager::start(AppState* state) {
 	int startTime = 0;
 
 	// Starts the main game loop
-	while(!m_bShutdown)
-	{
+	while(!m_bShutdown) {
 		// We need to close if the window is closed.
-		if(Framework::getSingletonPtr()->m_pRenderWnd->isClosed())m_bShutdown = true;
+		if(Framework::getSingletonPtr()->m_pRenderWnd->isClosed()) {
+			m_bShutdown = true;
+		}
 
 		Ogre::WindowEventUtilities::messagePump();
 
 		// We only run the main game loop if the window is active
-		if(Framework::getSingletonPtr()->m_pRenderWnd->isActive())
-		{
+		if(Framework::getSingletonPtr()->m_pRenderWnd->isActive()) {
 			// Sets the start time of the frame
 			startTime = Framework::getSingletonPtr()->m_pTimer->getMillisecondsCPU();
 
@@ -98,9 +92,7 @@ void AppStateManager::start(AppState* state) {
 
 			// Sets the time since the last frame.
 			timeSinceLastFrame = Framework::getSingletonPtr()->m_pTimer->getMillisecondsCPU() - startTime;
-		}
-		else 
-		{
+		} else {
 			// If the window isn't active we sleep for a second
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             Sleep(1000);
@@ -149,27 +141,24 @@ bool AppStateManager::pushAppState(AppState* state) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void AppStateManager::popAppState() {
-	if(!m_ActiveStateStack.empty())
-	{
+	if(!m_ActiveStateStack.empty()) {
 		m_ActiveStateStack.back()->exit();
 		m_ActiveStateStack.pop_back();
 	}
 
-	if(!m_ActiveStateStack.empty())
-	{
+	if(!m_ActiveStateStack.empty()) {
 		init(m_ActiveStateStack.back());
 		m_ActiveStateStack.back()->resume();
-	}
-    else
+	} else {
 		shutdown();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void AppStateManager::popAllAndPushAppState(AppState* state) {
 	if (state) {
-		while(!m_ActiveStateStack.empty())
-		{
+		while(!m_ActiveStateStack.empty()) {
 			m_ActiveStateStack.back()->exit();
 			m_ActiveStateStack.pop_back();
 		}
