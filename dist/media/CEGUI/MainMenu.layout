@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GUILayout>
+	<Window Type="TaharezLook/FrameWindow" Name="Main">
+		<Property Name="Text" Value ="0xe^n" />
+		<Property Name="TitlebarFont" Value="DejaVuSans-10" />
+		<Property Name="TitlebarEnabled" Value="True" />
+		<Property Name="UnifiedAreaRect" Value="{{0.5,-200},{0.2,0},{0.5,200},{0.8,0}}" />
+		<Window Type="TaharezLook/Button" Name="Main/Game">
+			<Property Name="Text" Value="Enter Game State" />
+			<Property Name="UnifiedAreaRect" Value="{{0.05,0},{0.125,0},{0.95,0},{0.375,0}}" />
+		</Window>
+		<Window Type="TaharezLook/Button" Name="Main/Exit">
+			<Property Name="Text" Value="Exit" />
+			<Property Name="UnifiedAreaRect" Value="{{0.05,0},{0.625,0},{0.95,0},{0.875,0}}" />
+		</Window>
+	</Window>
+</GUILayout>
