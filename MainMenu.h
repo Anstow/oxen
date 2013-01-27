@@ -35,13 +35,6 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 
-	/**
-	 * @brief Handles buttons being pressed
-	 *
-	 * @param button The pressed button
-	 */
-	void buttonHit(OgreBites::Button* button);
-
 	void update(double timeSinceLastFrame);
 
 private:

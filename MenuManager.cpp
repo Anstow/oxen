@@ -1,19 +1,6 @@
 #include "MenuManager.h"
 
-MenuManager::MenuManager() {
-}
-
-MenuManager::~MenuManager() {
-	// Clears the menu pointers
-	while(!m_Menus.empty()) {
-		m_Menus.pop_back();
-	}
-
-	// TODO: I'm not sure if this is necessary, remove if it isn't
-	CEGUI::WindowManager::getSingletonPtr()->destroyAllWindows();
-}
-
-bool MenuManager::init(Ogre::RenderTarget &pWnd) {
+MenuManager::MenuManager(Ogre::RenderTarget &pWnd) {
 	// Set up the renderer
 	CEGUI::OgreRenderer* renderer = &CEGUI::OgreRenderer::bootstrapSystem(pWnd);
 
@@ -24,13 +11,24 @@ bool MenuManager::init(Ogre::RenderTarget &pWnd) {
 	CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
 	
 	// Load the scheme
-	CEGUI::SchemeManager::getSingletonPtr()->create("TohorezLook.scheme");
+	CEGUI::SchemeManager::getSingletonPtr()->create("TaharezLook.scheme");
 	// Create the mouse cursor
 	CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
 
 	// Attach the root menu
 	m_pRootWnd = CEGUI::WindowManager::getSingletonPtr()->createWindow("DefaultWindow", "_MasterRoot");
+
 	CEGUI::System::getSingletonPtr()->setGUISheet(m_pRootWnd);
+}
+
+MenuManager::~MenuManager() {
+	// Clears the menu pointers
+	while(!m_Menus.empty()) {
+		m_Menus.pop_back();
+	}
+
+	// TODO: I'm not sure if this is necessary, remove if it isn't
+	//CEGUI::WindowManager::getSingletonPtr()->destroyAllWindows();
 }
 
 void MenuManager::pushMenu(CEGUI::Window* pMenu) {
@@ -54,16 +52,18 @@ void MenuManager::popAllMenus() {
 	}
 }
 
-void MenuManager::InjectOISkeyDown(const OIS::KeyEvent &inKey) {
+bool MenuManager::InjectOISkeyDown(const OIS::KeyEvent &inKey) {
 	CEGUI::System::getSingletonPtr()->injectKeyDown(inKey.key);
 	CEGUI::System::getSingletonPtr()->injectChar(inKey.text);
+	return true;
 }
 
-void MenuManager::InjectOISkeyUp(const OIS::KeyEvent &inKey) {
+bool MenuManager::InjectOISkeyUp(const OIS::KeyEvent &inKey) {
 	CEGUI::System::getSingletonPtr()->injectKeyUp(inKey.key);
+	return true;
 }
 
-void MenuManager::InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton) {
+bool MenuManager::InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton) {
 	switch (inButton) {
 	case OIS::MB_Left:
 		CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
@@ -83,9 +83,10 @@ void MenuManager::InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton) {
 	default:	
 		break;
 	}
+	return true;
 }
 
-void MenuManager::InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton) {
+bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton) {
 	switch (inButton) {
 	case OIS::MB_Left:
 		CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
@@ -105,13 +106,15 @@ void MenuManager::InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton) {
 	default:	
 		break;
 	}
+	return true;
 }
 
-void MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
+bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
 	CEGUI::System &sys = CEGUI::System::getSingleton();
 	sys.injectMouseMove(arg.state.X.rel, arg.state.Y.rel);
 	// Scroll wheel.
 	if (arg.state.Z.rel) {
 		sys.injectMouseWheelChange(arg.state.Z.rel / 120.0f);
 	}
+	return true;
 }

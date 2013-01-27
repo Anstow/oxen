@@ -1,4 +1,5 @@
 #include "MainMenu.h"
+#include <CEGUIWindow.h>
 
 using namespace Ogre;
 
@@ -29,12 +30,6 @@ void MainMenu::enter() {
 	Framework::getSingletonPtr()->m_pTrayMgr->destroyAllWidgets();
 	Framework::getSingletonPtr()->m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
 	Framework::getSingletonPtr()->m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-	Framework::getSingletonPtr()->m_pTrayMgr->hideCursor();
-
-	// Create the buttons TODO:we should do this in createScene and using CEGUI
-	Framework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_CENTER, "EnterBtn", "Enter GameState", 250);
-	Framework::getSingletonPtr()->m_pTrayMgr->createButton(OgreBites::TL_CENTER, "ExitBtn", "Exit AdvancedOgreFramework", 250);
-	Framework::getSingletonPtr()->m_pTrayMgr->createLabel(OgreBites::TL_TOP, "MenuLbl", "Menu mode", 250);
 
 	createScene();
 }
@@ -42,7 +37,14 @@ void MainMenu::enter() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void MainMenu::createScene() {
-	// TODO: Set up CEGUI stuff
+	try {
+		CEGUI::Window* pMenu = CEGUI::WindowManager::getSingleton().loadWindowLayout("MainMenu.layout");
+		pushMenu(pMenu);
+	} catch (CEGUI::Exception &e) {
+		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, e.getMessage().c_str(), "Error Parsing Menu");
+		shutdown();
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,15 +86,20 @@ bool MainMenu::keyReleased(const OIS::KeyEvent &keyEventRef) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool MainMenu::mouseMoved(const OIS::MouseEvent &evt) {
-	if (Framework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) {
+	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseMove(evt)) {
+		return true;
+	} else if (Framework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) {
 		return true;
 	}
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-    if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt, id)) {
+	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonDown(id)) {
+		return true;
+	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt, id)) {
 		return true;
 	}
     return true;
@@ -101,7 +108,9 @@ bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
 ////////////////////////////////////////////////////////////////////////////////
  
 bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-    if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt, id)) {
+	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonUp(id)) {
+		return true;
+	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt, id)) {
 		return true;
 	}
     return true;
@@ -120,11 +129,3 @@ void MainMenu::update(double timeSinceLastFrame) {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-void MainMenu::buttonHit(OgreBites::Button *button) {
-    if(button->getName() == "ExitBtn")
-        m_bQuit = true;
-    else if(button->getName() == "EnterBtn")
-        changeAppState(findByName("GameState"));
-}

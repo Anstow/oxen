@@ -18,6 +18,7 @@
 #include <OISMouse.h>
  
 #include <SdkTrays.h>
+#include "MenuManager.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -113,6 +114,7 @@ public:
 	OIS::Mouse* m_pMouse;
 
 	OgreBites::SdkTrayManager* m_pTrayMgr;
+	MenuManager* m_pMenuMgr;
 
 private:
 	Framework(const Framework&);

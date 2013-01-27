@@ -19,17 +19,19 @@ Framework::Framework() {
 	m_pKeyboard= 0;
 	m_pMouse= 0;
 	m_pTrayMgr= 0;
+
+	m_pMenuMgr = 0;
 }
 
 Framework::~Framework() {
-	Framework::getSingletonPtr()->m_pLog->logMessage("Shutdown OGRE...");
+	m_pLog->logMessage("Shutdown OGRE...");
 	if (m_pTrayMgr) delete m_pTrayMgr;
 	if (m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
 	if (m_pRoot) delete m_pRoot;
+	if (m_pMenuMgr) delete m_pMenuMgr;
 }
 
-bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
-{
+bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener) {
 	// Set up the log manager
     LogManager* logMgr = new Ogre::LogManager();
  
@@ -104,14 +106,15 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
 	// TODO: Remove this in final version of any game
 	// Set up the information tray
     m_pTrayMgr = new OgreBites::SdkTrayManager("AOFTrayMgr", m_pRenderWnd, m_pMouse, 0);
+	m_pTrayMgr->hideCursor();
+
+	// Set up the menu manager
+	m_pMenuMgr = new MenuManager(*m_pRenderWnd);
  
 	// Create and start our timer for timing between frames 
     m_pTimer = new Ogre::Timer();
     m_pTimer->reset();
 	
-	// Attach the render window 
-	
- 
 	// Put the window in the foreground?
     m_pRenderWnd->setActive(true);
  
@@ -121,25 +124,23 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::keyPressed(const OIS::KeyEvent &keyEventRef) {
-    if(m_pKeyboard->isKeyDown(OIS::KC_SYSRQ))
-    {
+    if(m_pKeyboard->isKeyDown(OIS::KC_SYSRQ)) {
         m_pRenderWnd->writeContentsToTimestampedFile("AOF_Screenshot_", ".jpg");
         return true;
     }
 
-    if(m_pKeyboard->isKeyDown(OIS::KC_O))
-    {
-        if(m_pTrayMgr->isLogoVisible())
-        {
+    if(m_pKeyboard->isKeyDown(OIS::KC_O)) {
+        if(m_pTrayMgr->isLogoVisible()) {
             m_pTrayMgr->hideFrameStats();
             m_pTrayMgr->hideLogo();
         }
-        else
-        {
+        else {
             m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
             m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
         }
     }
+
+	m_pMenuMgr->InjectOISkeyDown(keyEventRef);
 
     return true;
 }
@@ -147,28 +148,37 @@ bool Framework::keyPressed(const OIS::KeyEvent &keyEventRef) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::keyReleased(const OIS::KeyEvent &keyEventRef) {
+	m_pMenuMgr->InjectOISkeyUp(keyEventRef);
+
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mouseMoved(const OIS::MouseEvent &evt) {
+	m_pMenuMgr->InjectOISMouseMove(evt);
+
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+	m_pMenuMgr->InjectOISMouseButtonDown(id);
+
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+	m_pMenuMgr->InjectOISMouseButtonUp(id);
+
     return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Framework::updateOgre(double timeSinceLastFrame) {
+	CEGUI::System::getSingleton().injectTimePulse(timeSinceLastFrame);
 }
