@@ -1,4 +1,5 @@
 #include "MenuManager.h"
+#include <CEGUIVector.h>
 
 MenuManager::MenuManager(Ogre::RenderTarget &pWnd) {
 	// Set up the renderer
@@ -63,7 +64,7 @@ bool MenuManager::InjectOISkeyUp(const OIS::KeyEvent &inKey) {
 	return true;
 }
 
-bool MenuManager::InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton) {
+bool MenuManager::InjectOISMouseButtonDown(const OIS::MouseEvent &arg, const OIS::MouseButtonID &inButton) {
 	switch (inButton) {
 	case OIS::MB_Left:
 		CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
@@ -83,10 +84,14 @@ bool MenuManager::InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton) {
 	default:	
 		break;
 	}
-	return true;
+	// TODO: This is a little hacked it depends on the absolute position of the
+	// mouse not the relative one. We should invesitgate whether the inject
+	// series of functions return true if a window is clicked on or if it is
+	// processed.
+	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
 }
 
-bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton) {
+bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseEvent &arg, const OIS::MouseButtonID &inButton) {
 	switch (inButton) {
 	case OIS::MB_Left:
 		CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
@@ -106,7 +111,11 @@ bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton) {
 	default:	
 		break;
 	}
-	return true;
+	// TODO: This is a little hacked it depends on the absolute position of the
+	// mouse not the relative one. We should invesitgate whether the inject
+	// series of functions return true if a window is clicked on or if it is
+	// processed.
+	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
 }
 
 bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
@@ -116,5 +125,14 @@ bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
 	if (arg.state.Z.rel) {
 		sys.injectMouseWheelChange(arg.state.Z.rel / 120.0f);
 	}
+	// TODO: This is a little hacked it depends on the absolute position of the
+	// mouse not the relative one. We should invesitgate whether the inject
+	// series of functions return true if a window is clicked on or if it is
+	// processed.
+	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
+}
+
+bool MenuManager::InjectOISMousePosition(float xPos, float yPos) {
+	CEGUI::System::getSingleton().injectMousePosition(xPos, yPos);
 	return true;
 }

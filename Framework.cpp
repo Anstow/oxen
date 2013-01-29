@@ -110,6 +110,9 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
 
 	// Set up the menu manager
 	m_pMenuMgr = new MenuManager(*m_pRenderWnd);
+
+	// Sets the mouse cursor position (I'm not sure if this is currently necessary, it may break the hacked way I've detected whether the mouse clicked on the gui (we'd need something else to check this))
+	m_pMenuMgr->InjectOISMousePosition(m_pMouse->getMouseState().X.abs, m_pMouse->getMouseState().Y.abs);
  
 	// Create and start our timer for timing between frames 
     m_pTimer = new Ogre::Timer();
@@ -164,7 +167,7 @@ bool Framework::mouseMoved(const OIS::MouseEvent &evt) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	m_pMenuMgr->InjectOISMouseButtonDown(id);
+	m_pMenuMgr->InjectOISMouseButtonDown(evt, id);
 
     return true;
 }
@@ -172,7 +175,7 @@ bool Framework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	m_pMenuMgr->InjectOISMouseButtonUp(id);
+	m_pMenuMgr->InjectOISMouseButtonUp(evt, id);
 
     return true;
 }

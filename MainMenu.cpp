@@ -9,7 +9,23 @@ using namespace Ogre;
 MainMenu::MainMenu() {
 	m_bQuit = false;
 	m_FrameEvent = Ogre::FrameEvent();
+
+	try {
+		m_pMenu = CEGUI::WindowManager::getSingleton().loadWindowLayout("MainMenu.layout");
+
+		if (m_pMenu->isChild("Main/Exit")) {
+			m_pMenu->getChild("Main/Exit")->subscribeEvent(CEGUI::Window::EventMouseButtonUp,
+					CEGUI::Event::Subscriber(&MainMenu::onExit, this));
+		} else {
+			Framework::getSingletonPtr()->m_pLog->logMessage("Error, loading MainMenu no exit button found");
+		}
+	} catch (CEGUI::Exception &e) {
+		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, e.getMessage().c_str(), "Error Parsing Menu");
+		shutdown();
+	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 void MainMenu::enter() {
 	Framework::getSingletonPtr()->m_pLog->logMessage("Entering MainMenu...");
@@ -38,15 +54,8 @@ void MainMenu::enter() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void MainMenu::createScene() {
-	try {
-		CEGUI::Window* pMenu = CEGUI::WindowManager::getSingleton().loadWindowLayout("MainMenu.layout");
-		pushMenu(pMenu);
-
-		pMenu->getChildRecursive("Main/Exit")->subscribeEvent(CEGUI::Window::EventMouseButtonUp,
-				CEGUI::Event::Subscriber(&MainMenu::onExit, this));
-	} catch (CEGUI::Exception &e) {
-		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, e.getMessage().c_str(), "Error Parsing Menu");
-		shutdown();
+	if (m_pMenu) {
+		pushMenu(m_pMenu);
 	}
 }
 
@@ -60,6 +69,8 @@ void MainMenu::exit() {
 	if (m_pSceneMgr) {
 		Framework::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
 	}
+
+	popAllMenus();
 
 	// Remove tray data
 	Framework::getSingletonPtr()->m_pTrayMgr->clearAllTrays();
@@ -100,7 +111,7 @@ bool MainMenu::mouseMoved(const OIS::MouseEvent &evt) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonDown(id)) {
+	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonDown(evt, id)) {
 		return true;
 	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt, id)) {
 		return true;
@@ -111,7 +122,7 @@ bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
 ////////////////////////////////////////////////////////////////////////////////
  
 bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonUp(id)) {
+	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonUp(evt, id)) {
 		return true;
 	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt, id)) {
 		return true;

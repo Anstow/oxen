@@ -50,4 +50,5 @@ private:
 	bool onExit(const CEGUI::EventArgs& e);
 
 	bool m_bQuit;
+	CEGUI::Window* m_pMenu;
 };

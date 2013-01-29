@@ -47,32 +47,53 @@ public:
 	 * @brief Injects a key down event
 	 *
 	 * @param inKey The key data
+	 *
+	 * @return true
 	 */
 	bool InjectOISkeyDown(const OIS::KeyEvent &inKey);
 	/**
 	 * @brief Injects a key up event
 	 *
 	 * @param inKey The key data
+	 *
+	 * @return true
 	 */
 	bool InjectOISkeyUp(const OIS::KeyEvent &inKey);
 	/**
 	 * @brief Injects and translates a mouse button down event
 	 *
+	 * @param arg The key data
 	 * @param inButton The button ID
+	 *
+	 * @return Whether the mouse is over the gui
 	 */
-	bool InjectOISMouseButtonDown(const OIS::MouseButtonID &inButton);
+	bool InjectOISMouseButtonDown(const OIS::MouseEvent &arg, const OIS::MouseButtonID &inButton);
 	/**
 	 * @brief Injects and translates a mouse botton up event
 	 *
+	 * @param arg The key data
 	 * @param inButton The botton ID
-	 */
-	bool InjectOISMouseButtonUp(const OIS::MouseButtonID &inButton);
-	/**
-	 * @brief Injects the mouse button move event including scroll wheel
 	 *
-	 * @param arg The mouse movement
+	 * @return Whether the mouse is over the gui
+	 */
+	bool InjectOISMouseButtonUp(const OIS::MouseEvent &arg, const OIS::MouseButtonID &inButton);
+	/**
+	 * @brief Injects the mouse cursor move event including scroll wheel
+	 *
+	 * @param arg The key data
+	 *
+	 * @return Whether the mouse is over the gui
 	 */
 	bool InjectOISMouseMove(const OIS::MouseEvent &arg);
+	/**
+	 * @brief This injects the mouse cursor position
+	 *
+	 * @param xPos The x position
+	 * @param yPos The y position
+	 *
+	 * @return true
+	 */
+	bool InjectOISMousePosition(float xPos, float yPos);
 
 private:
 	CEGUI::OgreRenderer* renderer;
