@@ -1,4 +1,5 @@
 #include "MainMenu.h"
+#include <CEGUIEvent.h>
 #include <CEGUIWindow.h>
 
 using namespace Ogre;
@@ -40,11 +41,13 @@ void MainMenu::createScene() {
 	try {
 		CEGUI::Window* pMenu = CEGUI::WindowManager::getSingleton().loadWindowLayout("MainMenu.layout");
 		pushMenu(pMenu);
+
+		pMenu->getChildRecursive("Main/Exit")->subscribeEvent(CEGUI::Window::EventMouseButtonUp,
+				CEGUI::Event::Subscriber(&MainMenu::onExit, this));
 	} catch (CEGUI::Exception &e) {
 		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, e.getMessage().c_str(), "Error Parsing Menu");
 		shutdown();
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,3 +132,8 @@ void MainMenu::update(double timeSinceLastFrame) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+bool MainMenu::onExit(const CEGUI::EventArgs& e) {
+	shutdown();
+}

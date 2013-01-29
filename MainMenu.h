@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AppState.h"
+#include <CEGUIEventArgs.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,5 +39,15 @@ public:
 	void update(double timeSinceLastFrame);
 
 private:
+	////////////////////////////////////////////////////////////////////////////
+	// Button event functions
+	////////////////////////////////////////////////////////////////////////////
+	/**
+	 * @brief This handle the clicking of the exit button.
+	 *
+	 * @param e The data from the event.
+	 */
+	bool onExit(const CEGUI::EventArgs& e);
+
 	bool m_bQuit;
 };
