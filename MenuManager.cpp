@@ -85,9 +85,8 @@ bool MenuManager::InjectOISMouseButtonDown(const OIS::MouseEvent &arg, const OIS
 		break;
 	}
 	// TODO: This is a little hacked it depends on the absolute position of the
-	// mouse not the relative one. We should invesitgate whether the inject
-	// series of functions return true if a window is clicked on or if it is
-	// processed.
+	// mouse. We should invesitgate if we can do this using the return from the
+	// inject statements.
 	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
 }
 
@@ -112,23 +111,21 @@ bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseEvent &arg, const OIS::
 		break;
 	}
 	// TODO: This is a little hacked it depends on the absolute position of the
-	// mouse not the relative one. We should invesitgate whether the inject
-	// series of functions return true if a window is clicked on or if it is
-	// processed.
+	// mouse. We should invesitgate if we can do this using the return from the
+	// inject statements.
 	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
 }
 
 bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
 	CEGUI::System &sys = CEGUI::System::getSingleton();
-	sys.injectMouseMove(arg.state.X.rel, arg.state.Y.rel);
+	sys.injectMousePosition(arg.state.X.abs, arg.state.Y.abs);
 	// Scroll wheel.
 	if (arg.state.Z.rel) {
 		sys.injectMouseWheelChange(arg.state.Z.rel / 120.0f);
 	}
 	// TODO: This is a little hacked it depends on the absolute position of the
-	// mouse not the relative one. We should invesitgate whether the inject
-	// series of functions return true if a window is clicked on or if it is
-	// processed.
+	// mouse. We should invesitgate if we can do this using the return from the
+	// inject statements.
 	return m_pRootWnd->getChildAtPosition(CEGUI::Vector2(arg.state.X.abs, arg.state.Y.abs));
 }
 
