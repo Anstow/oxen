@@ -4,8 +4,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AppStateManager::AppStateManager() {
-	m_bShutdown = false;
+AppStateManager::AppStateManager()
+	: m_bShutdown(false)
+	, m_pFramework(Framework::getSingletonPtr())
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +21,8 @@ AppStateManager::~AppStateManager() {
 		m_ActiveStateStack.pop_back();
 	}
 
+
+	Framework::getSingletonPtr()->m_pLog->logMessage("Clear states");
 	// Removes the preloaded states
 	while(!m_States.empty()) {
 		si = m_States.back();
@@ -170,14 +174,58 @@ void AppStateManager::popAllAndPushAppState(AppState* state) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void AppStateManager::shutdown() {
+	Framework::getSingletonPtr()->m_pLog->logMessage("Shutdown");
 	m_bShutdown = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool AppStateManager::keyPressed(const OIS::KeyEvent &keyEventRef) {
+	if (!m_pFramework->keyPressed(keyEventRef)) {
+		if (!m_ActiveStateStack.empty()) return m_ActiveStateStack.back()->keyPressed(keyEventRef);
+		return false;
+	}
+	return true;
+}
+
+bool AppStateManager::keyReleased(const OIS::KeyEvent &keyEventRef) {
+	if (!m_pFramework->keyReleased(keyEventRef)) {
+		if (!m_ActiveStateStack.empty()) return m_ActiveStateStack.back()->keyReleased(keyEventRef);
+		return false;
+	}
+	return true;
+}
+
+bool AppStateManager::mouseMoved(const OIS::MouseEvent &evt) {
+	if (!m_pFramework->mouseMoved(evt)) {
+		if (!m_ActiveStateStack.empty()) return m_ActiveStateStack.back()->mouseMoved(evt);
+		return false;
+	}
+	return true;
+}
+
+bool AppStateManager::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+	if (!m_pFramework->mousePressed(evt,id)) {
+		if (!m_ActiveStateStack.empty()) return m_ActiveStateStack.back()->mousePressed(evt, id);
+		return false;
+	}
+	return true;
+}
+
+bool AppStateManager::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+	if (!m_pFramework->mouseReleased(evt, id)) {
+		if (!m_ActiveStateStack.empty()) return m_ActiveStateStack.back()->mouseReleased(evt, id);
+		return false;
+	}
+	return true;
+}
+
+inline Ogre::Vector2 AppStateManager::getPosition() {
+	return m_pFramework->m_pMenuMgr->getPosition();
+}
+////////////////////////////////////////////////////////////////////////////////
+
 void AppStateManager::init(AppState* state) {
-    Framework::getSingletonPtr()->m_pKeyboard->setEventCallback(state);
-	Framework::getSingletonPtr()->m_pMouse->setEventCallback(state);
     Framework::getSingletonPtr()->m_pTrayMgr->setListener(state);
 
 	Framework::getSingletonPtr()->m_pRenderWnd->resetStatistics();

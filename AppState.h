@@ -11,6 +11,8 @@ class AppState;
  * used in App State and so must be defined here
  */
 class AppStateListener
+	: public OIS::KeyListener
+	, public OIS::MouseListener
 {
 public:
 	/**
@@ -66,6 +68,13 @@ public:
 	 * @param state The state to load.
 	 */
     virtual void popAllAndPushAppState(AppState* state) = 0;
+
+	virtual bool keyPressed(const OIS::KeyEvent &keyEventRef) = 0;
+	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef) = 0;
+
+	virtual bool mouseMoved(const OIS::MouseEvent &evt) = 0;
+	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
+	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +82,8 @@ public:
 /**
  * @brief This is a template for the applictation states (currently only menu)
  */
-class AppState : public OIS::KeyListener, public OIS::MouseListener, public OgreBites::SdkTrayListener
+class AppState
+	: public OgreBites::SdkTrayListener
 {
 public:
 	/**
@@ -114,11 +124,20 @@ public:
 	 */
 	virtual void update(double timeSinceLastFrame) = 0;
 
+	virtual bool keyPressed(const OIS::KeyEvent &keyEventRef) = 0;
+	virtual bool keyReleased(const OIS::KeyEvent &keyEventRef) = 0;
+
+	virtual bool mouseMoved(const OIS::MouseEvent &evt) = 0;
+	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
+	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
+
 protected:
 	/**
 	 * @brief Constructor for the state
 	 */
-	AppState(){};
+	AppState()
+		: m_pMenuMgr(Framework::getSingletonPtr()->m_pMenuMgr)
+	{}
 
 	/**
 	 * @brief Finds the state by its name TODO: replace with enum
@@ -158,20 +177,18 @@ protected:
     void popAllAndPushAppState(AppState* state){m_pParent->popAllAndPushAppState(state);}
 
 	/**
-	 * @brief This pushes a Menu onto the stack
+	 * @brief This adds the specified menu from the world
 	 *
-	 * @param pMenu The menu to add to the stack
+	 * @param wnd The specified menu to add
 	 */
-	inline void pushMenu(CEGUI::Window* pMenu) { Framework::getSingletonPtr()->m_pMenuMgr->pushMenu(pMenu); }
+	void pushMenu(CEGUI::Window* pMenu) { m_pMenuMgr->pushMenu(pMenu); }
 	/**
-	 * @brief This removes the menu from the top of the stack
+	 * @brief This removes the specified menu from the world
+	 *
+	 * @param wnd The specified menu to remove
 	 */
-	inline void popMenu() { Framework::getSingletonPtr()->m_pMenuMgr->popMenu(); }
-	/**
-	 * @brief This removes all of the menus from the stack
-	 */
-	inline void popAllMenus() { Framework::getSingletonPtr()->m_pMenuMgr->popAllMenus(); }
-	
+	void popMenu(CEGUI::Window* pMenu) { m_pMenuMgr->popMenu(pMenu); }
+
 	/**
 	 * @brief Shuts down the game
 	 */
@@ -182,6 +199,9 @@ protected:
 	Ogre::Camera* m_pCamera;
 	Ogre::SceneManager* m_pSceneMgr;
     Ogre::FrameEvent m_FrameEvent;
+
+private:
+	MenuManager* m_pMenuMgr;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

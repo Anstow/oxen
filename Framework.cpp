@@ -1,41 +1,45 @@
 #include "Framework.h"
 
-using namespace Ogre;
-
 ////////////////////////////////////////////////////////////////////////////////
 
 template<> Framework* Ogre::Singleton<Framework>::msSingleton = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Framework::Framework() {
-	m_pRoot = 0;
-	m_pRenderWnd = 0;
-	m_pViewport= 0;
-	m_pLog= 0;
-	m_pTimer= 0;
+Framework::Framework()
+	:m_pRoot(0),
+	m_pRenderWnd(0),
+	m_pViewport(0),
+	m_pLog(0),
+	m_pTimer(0),
  
-	m_pInputMgr= 0;
-	m_pKeyboard= 0;
-	m_pMouse= 0;
-	m_pTrayMgr= 0;
+	m_pInputMgr(0),
+	m_pKeyboard(0),
+	m_pMouse(0),
+	m_pTrayMgr(0),
 
-	m_pMenuMgr = 0;
+	m_pMenuMgr(0)
+{
 }
 
 Framework::~Framework() {
 	m_pLog->logMessage("Shutdown OGRE...");
-	if (m_pTrayMgr) delete m_pTrayMgr;
-	if (m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
-	if (m_pRoot) delete m_pRoot;
 	if (m_pMenuMgr) delete m_pMenuMgr;
+	m_pLog->logMessage("Deleted m_pMenuMgr");
+
+	if (m_pTrayMgr) delete m_pTrayMgr;
+	m_pLog->logMessage("Deleted m_pTrayMgr");
+	if (m_pInputMgr) OIS::InputManager::destroyInputSystem(m_pInputMgr);
+	m_pLog->logMessage("Deleted m_pInputMgr");
+	// TODO: This fails at the moment; this I need to recompile OGRE 
+	if (m_pRoot) delete m_pRoot;
 }
 
 bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener) {
 	// Set up the log manager
-    LogManager* logMgr = new Ogre::LogManager();
+	Ogre::LogManager* logMgr = new Ogre::LogManager();
  
-    m_pLog = LogManager::getSingleton().createLog("OgreLogfile.log", true, true, false);
+    m_pLog = Ogre::LogManager::getSingleton().createLog("OgreLogfile.log", true, true, false);
     m_pLog->setDebugOutputEnabled(true);
  
 	// Create the root
@@ -51,7 +55,7 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
  
 	// create the Viewport
     m_pViewport = m_pRenderWnd->addViewport(0);
-    m_pViewport->setBackgroundColour(ColourValue(0.5f, 0.5f, 0.5f, 1.0f));
+    m_pViewport->setBackgroundColour(Ogre::ColourValue(0.5f, 0.5f, 0.5f, 1.0f));
  
 	// set no camera
     m_pViewport->setCamera(0);
@@ -70,16 +74,6 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
  
     m_pMouse->getMouseState().height = m_pRenderWnd->getHeight();
     m_pMouse->getMouseState().width  = m_pRenderWnd->getWidth();
- 
-    if(pKeyListener == 0)
-        m_pKeyboard->setEventCallback(this);
-    else
-        m_pKeyboard->setEventCallback(pKeyListener);
- 
-    if(pMouseListener == 0)
-        m_pMouse->setEventCallback(this);
-    else
-        m_pMouse->setEventCallback(pMouseListener);
  
 	// TODO: Make own resource loading functions to load all the resource locations from one file
 	// Load the resources
@@ -111,9 +105,6 @@ bool Framework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, 
 	// Set up the menu manager
 	m_pMenuMgr = new MenuManager(*m_pRenderWnd);
 
-	// Sets the mouse cursor position (I'm not sure if this is currently necessary, it may break the hacked way I've detected whether the mouse clicked on the gui (we'd need something else to check this))
-	m_pMenuMgr->InjectOISMousePosition(m_pMouse->getMouseState().X.abs, m_pMouse->getMouseState().Y.abs);
- 
 	// Create and start our timer for timing between frames 
     m_pTimer = new Ogre::Timer();
     m_pTimer->reset();
@@ -143,9 +134,7 @@ bool Framework::keyPressed(const OIS::KeyEvent &keyEventRef) {
         }
     }
 
-	m_pMenuMgr->InjectOISkeyDown(keyEventRef);
-
-    return true;
+	return m_pMenuMgr->InjectOISkeyDown(keyEventRef);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 #include "OxenApp.h"
 
 #include "MainMenu.h"
+#include "GameState.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -27,9 +28,12 @@ void OxenApp::startApp() {
 	Framework::getSingletonPtr()->m_pLog->logMessage("Oxen initialized");
 
 	m_pAppStateManager = new AppStateManager();
+    Framework::getSingletonPtr()->m_pKeyboard->setEventCallback(m_pAppStateManager);
+	Framework::getSingletonPtr()->m_pMouse->setEventCallback(m_pAppStateManager);
 
-	// TODO: reference application states using a enum
+	// TODO: reference application states using a enum or even not using this method at all
 	MainMenu::create(m_pAppStateManager, "MainMenu");
+	GameState::create(m_pAppStateManager, "GameState");
 
 	m_pAppStateManager->start(m_pAppStateManager->findByName("MainMenu"));
 }

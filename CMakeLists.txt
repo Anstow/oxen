@@ -8,8 +8,13 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Sets the C++ compiler. We can add debug marker here.
-set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_CXX_COMPILER "clang++")
+set(CMAKE_C_COMPILER "clang")
 set(EXECUTABLE_NAME OxenApp)
+
+if(UNIX)
+	add_definitions(-std=c++11)
+endif(UNIX)
 
 project(${EXECUTABLE_NAME})
 
@@ -59,7 +64,7 @@ find_package(OGRE REQUIRED)
 #endif()
 # }}}
 
-# {{{ Find OIS
+#{{{ Find OIS
 
 find_package(OIS REQUIRED)
 
@@ -124,17 +129,31 @@ set(HDRS
 	AppStateManager.h
 	Framework.h
 	MainMenu.h
+	GameState.h
 	MenuManager.h
 	OxenApp.h
+	# Engine code
+	Engine/Engine.h
+	Engine/RenderEntity.h
+	Engine/PhysicsEntity.h
+	Engine/EntityMgr.h
+	# Engine Networking code
+	Engine/Networking/NetworkedEntity.h
 )
  
 set(SRCS
 	AppStateManager.cpp
 	Framework.cpp
 	MainMenu.cpp
+	GameState.cpp
 	main.cpp
 	MenuManager.cpp
 	OxenApp.cpp
+	# Engine code
+	Engine/Engine.cpp
+	Engine/RenderEntity.cpp
+	Engine/PhysicsEntity.cpp
+	Engine/EntityMgr.cpp
 )
 #}}}
 
@@ -154,15 +173,16 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES DEBUG_POSTFIX _d)
 
 target_link_libraries(${EXECUTABLE_NAME} ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dist/bin)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dist/media)
+#file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dist/bin)
+#file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/dist/media)
+file(COPY ${CMAKE_SOURCE_DIR}/dist DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # post-build copy for win32
 if(WIN32 AND NOT MINGW)
 	add_custom_command( TARGET ${EXECUTABLE_NAME} PRE_BUILD
 		COMMAND if not exist .\\dist\\bin mkdir .\\dist\\bin )
 	add_custom_command( TARGET ${EXECUTABLE_NAME} POST_BUILD
-		COMMAND copy \"$(TargetPath)\" .\\dist\\bin ) #" Makes vims colouring work
+		COMMAND copy \"$(TargetPath)\" .\\dist\\bin ) #"# Makes vims colouring work
 endif(WIN32 AND NOT MINGW)
 
 if(MINGW OR UNIX)

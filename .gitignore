@@ -1,9 +1,4 @@
 CMakeCache.txt
-CMakeFiles
-Makefile
-cmake_install.cmake
-install_manifest.txt
 .*.swp
-OxenApp
 Ogre.cfg
-*.log
+.clang_complete

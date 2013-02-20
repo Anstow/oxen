@@ -1,23 +1,27 @@
 #pragma once
 
-#include "AppState.h"
 #include <CEGUIEventArgs.h>
 #include <CEGUIWindow.h>
 
+#include "AppState.h"
+#include "Engine/Engine.h"
+#include "Engine/RenderEntity.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 
-class MainMenu : public AppState
+class GameState : public AppState
 {
 public:
 	/**
 	 * @brief Creates the main menu state
 	 */
-	MainMenu();
+	GameState();
+	~GameState();
 
-	DECLARE_APPSTATE_CLASS(MainMenu)
+	DECLARE_APPSTATE_CLASS(GameState)
 
 	/**
-	 * @brief This deals with entering the main menu, setting up the camera and
+	 * @brief This deals with entering the game, setting up the camera and
 	 * resetting the game stats
 	 */
 	void enter();
@@ -30,11 +34,6 @@ public:
 	 */
 	void exit();
 
-	bool pause();
-	void resume();
-
-	void update(double timeSinceLastFrame);
-
 	bool keyPressed(const OIS::KeyEvent &keyEventRef);
 	bool keyReleased(const OIS::KeyEvent &keyEventRef);
 
@@ -42,18 +41,16 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 
+	void update(double timeSinceLastFrame);
+
 private:
-	////////////////////////////////////////////////////////////////////////////
-	// Button event functions
-	////////////////////////////////////////////////////////////////////////////
-	/**
-	 * @brief This handle the clicking of the exit button.
-	 *
-	 * @param e The data from the event.
-	 */
-	bool onExit(const CEGUI::EventArgs& e);
-	bool playGame(const CEGUI::EventArgs& e);
+	bool moveCamera();
 
 	bool m_bQuit;
-	CEGUI::Window* m_pMenu;
+	CEGUI::Window* m_pHud;
+	
+	Engine* m_pGameEngine;
+
+	RenderEntity* testEnt;
+	RenderEntity* testEnt2;
 };

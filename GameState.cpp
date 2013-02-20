@@ -1,48 +1,31 @@
-#include <CEGUIEvent.h>
+#include "GameState.h"
 
-#include "MainMenu.h"
+#include <OgrePrerequisites.h>
+#include <OgreVector3.h>
 
-////////////////////////////////////////////////////////////////////////////////
-
-MainMenu::MainMenu() {
-	m_bQuit = false;
-	m_FrameEvent = Ogre::FrameEvent();
-
-	try {
-		m_pMenu = CEGUI::WindowManager::getSingleton().loadWindowLayout("MainMenu.layout");
-
-		if (m_pMenu->isChild("Main/Exit")) {
-			m_pMenu->getChild("Main/Exit")->subscribeEvent(CEGUI::Window::EventMouseButtonUp,
-					CEGUI::Event::Subscriber(&MainMenu::onExit, this));
-		} else {
-			Framework::getSingletonPtr()->m_pLog->logMessage("Error, loading MainMenu no exit button found");
-		}
-		if (m_pMenu->isChild("Main/Game")) {
-			m_pMenu->getChild("Main/Game")->subscribeEvent(CEGUI::Window::EventMouseButtonUp,
-					CEGUI::Event::Subscriber(&MainMenu::playGame, this));
-		} else {
-			Framework::getSingletonPtr()->m_pLog->logMessage("Warning, loading MainMenu no Game button found");
-		}
-	} catch (CEGUI::Exception &e) {
-		OGRE_EXCEPT(Ogre::Exception::ERR_INTERNAL_ERROR, e.getMessage().c_str(), "Error Parsing Menu");
-		shutdown();
-	}
+GameState::GameState()
+	: m_pGameEngine(new Engine()),
+	testEnt(0)
+{
+	// TODO: Load hud
 }
 
-void MainMenu::createScene() {
-	if (m_pMenu) {
-		pushMenu(m_pMenu);
-	}
+GameState::~GameState()
+{
+	Framework::getSingletonPtr()->m_pLog->logMessage("Delete GameEngine");
+	if (m_pGameEngine) delete m_pGameEngine;
+	Framework::getSingletonPtr()->m_pLog->logMessage("Delete TestEntity");
+	if (testEnt) delete testEnt;
+	Framework::getSingletonPtr()->m_pLog->logMessage("Done closing game state");
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-void MainMenu::enter() {
-	Framework::getSingletonPtr()->m_pLog->logMessage("Entering MainMenu...");
+void GameState::enter() {
+	// TODO: Do anything which isn't creating the scene for example set the hud
+	Framework::getSingletonPtr()->m_pLog->logMessage("Entering GameState...");
 	m_bQuit = false;
 
 	// Create the SceneManager
-	m_pSceneMgr = Framework::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_GENERIC, "MenuSceneMgr");
+	m_pSceneMgr = Framework::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
 	m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.7f, 0.7f, 0.7f));
 
 	// Create the camera
@@ -58,20 +41,32 @@ void MainMenu::enter() {
 	Framework::getSingletonPtr()->m_pTrayMgr->destroyAllWidgets();
 	Framework::getSingletonPtr()->m_pTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
 	Framework::getSingletonPtr()->m_pTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-
+	
 	createScene();
 }
 
-void MainMenu::exit() {
-	Framework::getSingletonPtr()->m_pLog->logMessage("Leaving MainMenu...");
+void GameState::createScene() {
+	// TODO: create the scene
+	testEnt = new RenderEntity(m_pSceneMgr->getRootSceneNode(),m_pSceneMgr);
+	testEnt->loadMesh("cube.mesh");
+
+	testEnt2 = new RenderEntity(m_pSceneMgr->getRootSceneNode(),m_pSceneMgr);
+	testEnt2->loadMesh("cube.mesh");
+	testEnt2->updatePosition(Ogre::Vector3(1.0f,1.0f,1.0f));
+}
+
+void GameState::exit() {
+	Framework::getSingletonPtr()->m_pLog->logMessage("Leaving GameState...");
 
 	// Remove the camera
 	m_pSceneMgr->destroyCamera(m_pCamera);
 	if (m_pSceneMgr) {
 		Framework::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
+		delete testEnt;
+		testEnt = 0;
+		delete testEnt2;
+		testEnt2 = 0;
 	}
-
-	popMenu(m_pMenu);
 
 	// Remove tray data
 	Framework::getSingletonPtr()->m_pTrayMgr->clearAllTrays();
@@ -79,29 +74,21 @@ void MainMenu::exit() {
 	Framework::getSingletonPtr()->m_pTrayMgr->setListener(0);
 }
 
-bool MainMenu::pause() {
-	m_pMenu->disable();
-	return true;
-}
-
-void MainMenu::resume() {
-	m_pMenu->enable();
-}
-
-void MainMenu::update(double timeSinceLastFrame) {
+void GameState::update(double timeSinceLastFrame) {
     m_FrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     Framework::getSingletonPtr()->m_pTrayMgr->frameRenderingQueued(m_FrameEvent);
  
     if(m_bQuit == true)
     {
-        shutdown();
+		Framework::getSingletonPtr()->m_pLog->logMessage("Game State Quit");
+		popAllAndPushAppState(m_pParent->findByName("MainMenu"));
         return;
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool MainMenu::keyPressed(const OIS::KeyEvent &keyEventRef) {
+bool GameState::keyPressed(const OIS::KeyEvent &keyEventRef) {
 	if (Framework::getSingletonPtr()->m_pKeyboard->isKeyDown(OIS::KC_ESCAPE)) {
 		m_bQuit = true;
 		return true;
@@ -111,12 +98,12 @@ bool MainMenu::keyPressed(const OIS::KeyEvent &keyEventRef) {
 	return true;
 }
 
-bool MainMenu::keyReleased(const OIS::KeyEvent &keyEventRef) {
+bool GameState::keyReleased(const OIS::KeyEvent &keyEventRef) {
 	Framework::getSingletonPtr()->keyReleased(keyEventRef);
 	return true;
 }
 
-bool MainMenu::mouseMoved(const OIS::MouseEvent &evt) {
+bool GameState::mouseMoved(const OIS::MouseEvent &evt) {
 	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseMove(evt)) {
 		return true;
 	} else if (Framework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) {
@@ -125,7 +112,7 @@ bool MainMenu::mouseMoved(const OIS::MouseEvent &evt) {
 	return true;
 }
 
-bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+bool GameState::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
 	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonDown(evt, id)) {
 		return true;
 	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseDown(evt, id)) {
@@ -134,7 +121,7 @@ bool MainMenu::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
     return true;
 }
  
-bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
+bool GameState::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
 	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseButtonUp(evt, id)) {
 		return true;
 	} else if(Framework::getSingletonPtr()->m_pTrayMgr->injectMouseUp(evt, id)) {
@@ -145,14 +132,6 @@ bool MainMenu::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool MainMenu::onExit(const CEGUI::EventArgs& e) {
-	m_bQuit = true;
-	return true;
+bool GameState::moveCamera() {
+	Ogre::Vector2* mousePos = m_pMenuMgr->getPosition();
 }
-
-bool MainMenu::playGame(const CEGUI::EventArgs& e) {
-	popAllAndPushAppState(m_pParent->findByName("GameState"));
-	Framework::getSingletonPtr()->m_pLog->logMessage("Transfer to game state");
-	return true;
-}
-

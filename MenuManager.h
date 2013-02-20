@@ -9,6 +9,7 @@
 #include <OISEvents.h>
 #include <OISKeyboard.h>
 #include <OISMouse.h>
+#include <OgreVector2.h>
 
 /**
  * @brief This deals with everything to do with the menu (including mouse cursor)
@@ -37,11 +38,7 @@ public:
 	/**
 	 * @brief This removes the menu from the top of the stack
 	 */
-	void popMenu();
-	/**
-	 * @brief This removes all of the menus from the stack
-	 */
-	void popAllMenus();
+	void popMenu(CEGUI::Window* pMenu);
 
 	/**
 	 * @brief Injects a key down event
@@ -94,10 +91,15 @@ public:
 	 * @return true
 	 */
 	bool InjectOISMousePosition(float xPos, float yPos);
+	/**
+	 * @brief Get the mouse position on the screen
+	 *
+	 * @return The position of the mouse in pixels
+	 */
+	Ogre::Vector2 getPosition();
 
 private:
 	CEGUI::OgreRenderer* renderer;
 	CEGUI::Window* m_pRootWnd;
-	std::vector<CEGUI::Window*> m_Menus;
 };
 

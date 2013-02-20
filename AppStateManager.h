@@ -1,13 +1,16 @@
 #pragma once
 
 #include "AppState.h"
+#include "Framework.h"
+#include <OgreVector2.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief This is the class that manages the game states. It contains the main game loop.
  */
-class AppStateManager : public AppStateListener
+class AppStateManager
+	: public AppStateListener
 {
 public:
 	/**
@@ -79,6 +82,15 @@ public:
 	 */
 	void shutdown();
 
+	bool keyPressed(const OIS::KeyEvent &keyEventRef);
+	bool keyReleased(const OIS::KeyEvent &keyEventRef);
+
+	bool mouseMoved(const OIS::MouseEvent &evt);
+	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
+
+	Ogre::Vector2 getPosition();
+
 protected:
 	/**
 	 * @brief Initializes a new state, with input etc... And resets the debug window statistics.
@@ -86,6 +98,8 @@ protected:
 	 * @param state
 	 */
 	void init(AppState *state);
+
+	Framework* m_pFramework;
 
 	std::vector<AppState*> m_ActiveStateStack;
 	std::vector<state_info> m_States;
