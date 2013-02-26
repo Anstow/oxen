@@ -3,6 +3,7 @@
 #include <CEGUIEventArgs.h>
 #include <CEGUIWindow.h>
 
+#include "GameSettings.h"
 #include "AppState.h"
 #include "Engine/Engine.h"
 #include "Engine/RenderEntity.h"
@@ -48,6 +49,7 @@ private:
 
 	bool m_bQuit;
 	CEGUI::Window* m_pHud;
+	GameSettings* m_pSettings;
 	
 	Engine* m_pGameEngine;
 

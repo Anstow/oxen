@@ -4,8 +4,10 @@
 #include <OgreVector3.h>
 
 GameState::GameState()
-	: m_pGameEngine(new Engine()),
-	testEnt(0)
+	: m_pGameEngine(new Engine())
+	, m_pSettings(new GameSettings())
+	, testEnt(0)
+	, testEnt2(0)
 {
 	// TODO: Load hud
 }
@@ -14,8 +16,11 @@ GameState::~GameState()
 {
 	Framework::getSingletonPtr()->m_pLog->logMessage("Delete GameEngine");
 	if (m_pGameEngine) delete m_pGameEngine;
-	Framework::getSingletonPtr()->m_pLog->logMessage("Delete TestEntity");
+	Framework::getSingletonPtr()->m_pLog->logMessage("Delete settings");
+	if (m_pSettings) delete m_pSettings;
+	Framework::getSingletonPtr()->m_pLog->logMessage("Delete TestEntities");
 	if (testEnt) delete testEnt;
+	if (testEnt2) delete testEnt2;
 	Framework::getSingletonPtr()->m_pLog->logMessage("Done closing game state");
 }
 
@@ -84,6 +89,9 @@ void GameState::update(double timeSinceLastFrame) {
 		popAllAndPushAppState(m_pParent->findByName("MainMenu"));
         return;
     }
+
+	////////////////////////////////////////////////////////////////////////////
+	moveCamera();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,4 +142,50 @@ bool GameState::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 
 bool GameState::moveCamera() {
 	Ogre::Vector2 mousePos = getMousePos();
+	Ogre::Vector3 newCameraPos = m_pCamera->getPosition();
+	bool cameraMoved = false;
+
+	if (mousePos.y < m_pSettings->m_fScrollBorderSensitivity) {
+		// Scroll up
+		Ogre::Vector3 backwardDirection = m_pCamera->getDirection();
+		// Check the vector doesn't point directly down
+		if (backwardDirection.x == 0 && backwardDirection.y == 0) {
+			backwardDirection = m_pCamera->getUp();
+		}
+		backwardDirection.z = 0;
+		backwardDirection.normalise();
+		newCameraPos -= backwardDirection * m_pSettings->m_fScrollSpeed;
+		cameraMoved = true;
+	} else if (mousePos.y > Framework::getSingletonPtr()->m_pViewport->getActualHeight() - m_pSettings->m_fScrollBorderSensitivity) {
+		// Scroll down
+		Ogre::Vector3 backwardDirection = m_pCamera->getDirection();
+		// Check the vector doesn't point directly down
+		if (backwardDirection.x == 0 && backwardDirection.y == 0) {
+			backwardDirection = m_pCamera->getUp();
+		}
+		backwardDirection.z = 0;
+		backwardDirection.normalise();
+		newCameraPos += backwardDirection * m_pSettings->m_fScrollSpeed;
+		cameraMoved = true;
+	}
+
+	if (mousePos.x < m_pSettings->m_fScrollBorderSensitivity) {
+		// Scroll left
+		Ogre::Vector3 rightVect = m_pCamera->getRight();
+		rightVect.normalise();
+		newCameraPos -= rightVect * m_pSettings->m_fScrollSpeed;
+		cameraMoved = true;
+	} else if (mousePos.x > Framework::getSingletonPtr()->m_pViewport->getActualWidth() - m_pSettings->m_fScrollBorderSensitivity) {
+		// Scroll right
+		Ogre::Vector3 rightVect = m_pCamera->getRight();
+		rightVect.normalise();
+		newCameraPos += rightVect * m_pSettings->m_fScrollSpeed;
+		cameraMoved = true;
+	}
+
+	if (cameraMoved) {
+		m_pCamera->setPosition(newCameraPos);
+		return false;
+	}
+	return false;
 }

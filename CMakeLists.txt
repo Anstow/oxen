@@ -132,15 +132,18 @@ set(HDRS
 	Framework.h
 	MainMenu.h
 	GameState.h
+	GameSettings.h
 	MenuManager.h
 	OxenApp.h
-	# Engine code
-	Engine/Engine.h
-	Engine/RenderEntity.h
-	Engine/PhysicsEntity.h
-	Engine/EntityMgr.h
-	# Engine Networking code
-	Engine/Networking/NetworkedEntity.h
+
+		# Engine code
+		Engine/Engine.h
+		Engine/RenderEntity.h
+		Engine/PhysicsEntity.h
+		Engine/EntityMgr.h
+
+			# Engine Networking code
+			Engine/Networking/NetworkedEntity.h
 )
  
 set(SRCS
@@ -149,14 +152,16 @@ set(SRCS
 	Framework.cpp
 	MainMenu.cpp
 	GameState.cpp
+	GameSettings.cpp
 	main.cpp
 	MenuManager.cpp
 	OxenApp.cpp
-	# Engine code
-	Engine/Engine.cpp
-	Engine/RenderEntity.cpp
-	Engine/PhysicsEntity.cpp
-	Engine/EntityMgr.cpp
+
+		# Engine code
+		Engine/Engine.cpp
+		Engine/RenderEntity.cpp
+		Engine/PhysicsEntity.cpp
+		Engine/EntityMgr.cpp
 )
 #}}}
 
