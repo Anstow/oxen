@@ -133,5 +133,5 @@ bool GameState::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id)
 ////////////////////////////////////////////////////////////////////////////////
 
 bool GameState::moveCamera() {
-	Ogre::Vector2* mousePos = m_pMenuMgr->getPosition();
+	Ogre::Vector2 mousePos = getMousePos();
 }

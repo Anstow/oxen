@@ -1,5 +1,7 @@
 #pragma once
 
+#include <OgreVector2.h>
+
 #include "Framework.h"
 
 class AppState;
@@ -95,11 +97,6 @@ public:
 	static void create(AppStateListener* parent, const Ogre::String name){};
 
 	/**
-	 * @brief This destroy the state
-	 */
-	void destroy(){delete this;}
-
-	/**
 	 * @brief This deals with entering the state 
 	 */
 	virtual void enter() = 0;
@@ -130,6 +127,8 @@ public:
 	virtual bool mouseMoved(const OIS::MouseEvent &evt) = 0;
 	virtual bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
 	virtual bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) = 0;
+	
+	Ogre::Vector2 getMousePos() { return m_pMenuMgr->getMousePos(); }
 
 protected:
 	/**

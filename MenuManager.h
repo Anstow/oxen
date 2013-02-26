@@ -91,12 +91,13 @@ public:
 	 * @return true
 	 */
 	bool InjectOISMousePosition(float xPos, float yPos);
+
 	/**
 	 * @brief Get the mouse position on the screen
 	 *
 	 * @return The position of the mouse in pixels
 	 */
-	Ogre::Vector2 getPosition();
+	Ogre::Vector2 getMousePos();
 
 private:
 	CEGUI::OgreRenderer* renderer;

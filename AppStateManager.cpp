@@ -26,7 +26,7 @@ AppStateManager::~AppStateManager() {
 	// Removes the preloaded states
 	while(!m_States.empty()) {
 		si = m_States.back();
-        si.state->destroy();
+        delete si.state;
         m_States.pop_back();
 	}
 }
@@ -220,9 +220,6 @@ bool AppStateManager::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButton
 	return true;
 }
 
-inline Ogre::Vector2 AppStateManager::getPosition() {
-	return m_pFramework->m_pMenuMgr->getPosition();
-}
 ////////////////////////////////////////////////////////////////////////////////
 
 void AppStateManager::init(AppState* state) {

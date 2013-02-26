@@ -89,8 +89,6 @@ public:
 	bool mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id);
 
-	Ogre::Vector2 getPosition();
-
 protected:
 	/**
 	 * @brief Initializes a new state, with input etc... And resets the debug window statistics.

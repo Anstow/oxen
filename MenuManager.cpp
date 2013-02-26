@@ -106,7 +106,7 @@ bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
 	return true;
 }
 
-inline Ogre::Vector2 MenuManager::getPosition() {
+Ogre::Vector2 MenuManager::getMousePos() {
 	CEGUI::Point p = CEGUI::MouseCursor::getSingleton().getPosition();
 	return Ogre::Vector2(p.d_x, p.d_y);
 }
