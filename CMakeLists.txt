@@ -123,6 +123,10 @@ endif(CEGUI_FOUND)
 
 #{{{ Headers and Sources
 set(HDRS
+	# Dependecies
+	rapidxml/rapidxml.hpp
+
+	#Game
 	AppState.h
 	AppStateManager.h
 	Framework.h
@@ -140,6 +144,7 @@ set(HDRS
 )
  
 set(SRCS
+	#Game
 	AppStateManager.cpp
 	Framework.cpp
 	MainMenu.cpp
