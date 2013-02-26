@@ -183,6 +183,7 @@ bool GameState::moveCamera() {
 		cameraMoved = true;
 	}
 
+	// If the camera has moved set the position and return true
 	if (cameraMoved) {
 		m_pCamera->setPosition(newCameraPos);
 		return false;
