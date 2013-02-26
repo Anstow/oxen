@@ -8,8 +8,6 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Sets the C++ compiler. We can add debug marker here.
-set(CMAKE_CXX_COMPILER "clang++")
-set(CMAKE_C_COMPILER "clang")
 set(EXECUTABLE_NAME OxenApp)
 
 if(UNIX)
