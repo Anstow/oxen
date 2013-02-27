@@ -2,7 +2,6 @@
 
 #include <OgrePrerequisites.h>
 #include <OgreVector3.h>
-#include <OgreStringConverter.h>
 
 GameState::GameState()
 	: m_pGameEngine(new Engine())
