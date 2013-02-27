@@ -46,6 +46,7 @@ public:
 
 private:
 	bool moveCamera();
+	float m_fZAxis;
 
 	bool m_bQuit;
 	CEGUI::Window* m_pHud;

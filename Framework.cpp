@@ -140,33 +140,25 @@ bool Framework::keyPressed(const OIS::KeyEvent &keyEventRef) {
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::keyReleased(const OIS::KeyEvent &keyEventRef) {
-	m_pMenuMgr->InjectOISkeyUp(keyEventRef);
-
-    return true;
+	return m_pMenuMgr->InjectOISkeyUp(keyEventRef);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mouseMoved(const OIS::MouseEvent &evt) {
-	m_pMenuMgr->InjectOISMouseMove(evt);
-
-    return true;
+	return m_pMenuMgr->InjectOISMouseMove(evt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	m_pMenuMgr->InjectOISMouseButtonDown(evt, id);
-
-    return true;
+	return m_pMenuMgr->InjectOISMouseButtonDown(evt, id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Framework::mouseReleased(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
-	m_pMenuMgr->InjectOISMouseButtonUp(evt, id);
-
-    return true;
+	return m_pMenuMgr->InjectOISMouseButtonUp(evt, id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

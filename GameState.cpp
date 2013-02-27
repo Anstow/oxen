@@ -2,10 +2,12 @@
 
 #include <OgrePrerequisites.h>
 #include <OgreVector3.h>
+#include <OgreStringConverter.h>
 
 GameState::GameState()
 	: m_pGameEngine(new Engine())
 	, m_pSettings(new GameSettings())
+	, m_fZAxis(0.0f)
 	, testEnt(0)
 	, testEnt2(0)
 {
@@ -112,12 +114,16 @@ bool GameState::keyReleased(const OIS::KeyEvent &keyEventRef) {
 }
 
 bool GameState::mouseMoved(const OIS::MouseEvent &evt) {
+	// Get the scrolling
+	m_fZAxis = evt.state.Z.rel;
+
 	if(Framework::getSingletonPtr()->m_pMenuMgr->InjectOISMouseMove(evt)) {
 		return true;
 	} else if (Framework::getSingletonPtr()->m_pTrayMgr->injectMouseMove(evt)) {
 		return true;
 	}
-	return true;
+
+	return false;
 }
 
 bool GameState::mousePressed(const OIS::MouseEvent &evt, OIS::MouseButtonID id) {
@@ -154,7 +160,7 @@ bool GameState::moveCamera() {
 		}
 		backwardDirection.z = 0;
 		backwardDirection.normalise();
-		newCameraPos -= backwardDirection * m_pSettings->m_fScrollSpeed;
+		newCameraPos -= backwardDirection * m_pSettings->m_fSideScrollSpeed;
 		cameraMoved = true;
 	} else if (mousePos.y > Framework::getSingletonPtr()->m_pViewport->getActualHeight() - m_pSettings->m_fScrollBorderSensitivity) {
 		// Scroll down
@@ -165,7 +171,7 @@ bool GameState::moveCamera() {
 		}
 		backwardDirection.z = 0;
 		backwardDirection.normalise();
-		newCameraPos += backwardDirection * m_pSettings->m_fScrollSpeed;
+		newCameraPos += backwardDirection * m_pSettings->m_fSideScrollSpeed;
 		cameraMoved = true;
 	}
 
@@ -173,13 +179,19 @@ bool GameState::moveCamera() {
 		// Scroll left
 		Ogre::Vector3 rightVect = m_pCamera->getRight();
 		rightVect.normalise();
-		newCameraPos -= rightVect * m_pSettings->m_fScrollSpeed;
+		newCameraPos -= rightVect * m_pSettings->m_fSideScrollSpeed;
 		cameraMoved = true;
 	} else if (mousePos.x > Framework::getSingletonPtr()->m_pViewport->getActualWidth() - m_pSettings->m_fScrollBorderSensitivity) {
 		// Scroll right
 		Ogre::Vector3 rightVect = m_pCamera->getRight();
 		rightVect.normalise();
-		newCameraPos += rightVect * m_pSettings->m_fScrollSpeed;
+		newCameraPos += rightVect * m_pSettings->m_fSideScrollSpeed;
+		cameraMoved = true;
+	}
+
+	if (m_fZAxis) {
+		newCameraPos += Ogre::Vector3(0.0f, 0.0f, m_fZAxis*m_pSettings->m_fScrollSpeed);
+		m_fZAxis = 0;
 		cameraMoved = true;
 	}
 

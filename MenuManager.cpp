@@ -98,12 +98,11 @@ bool MenuManager::InjectOISMouseButtonUp(const OIS::MouseEvent &arg, const OIS::
 
 bool MenuManager::InjectOISMouseMove(const OIS::MouseEvent &arg) {
 	CEGUI::System &sys = CEGUI::System::getSingleton();
-	sys.injectMousePosition(arg.state.X.abs, arg.state.Y.abs);
 	// Scroll wheel.
 	if (arg.state.Z.rel) {
 		sys.injectMouseWheelChange(arg.state.Z.rel / 120.0f);
 	}
-	return true;
+	return sys.injectMousePosition(arg.state.X.abs, arg.state.Y.abs);
 }
 
 Ogre::Vector2 MenuManager::getMousePos() {
