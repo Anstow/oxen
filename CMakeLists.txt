@@ -139,6 +139,7 @@ set(HDRS
 		# Engine code
 		Engine/Engine.h
 		Engine/RenderEntity.h
+		Engine/InterEntity.h
 		Engine/PhysicsEntity.h
 		Engine/EntityMgr.h
 
@@ -160,6 +161,7 @@ set(SRCS
 		# Engine code
 		Engine/Engine.cpp
 		Engine/RenderEntity.cpp
+		Engine/InterEntity.cpp
 		Engine/PhysicsEntity.cpp
 		Engine/EntityMgr.cpp
 )

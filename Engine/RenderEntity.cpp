@@ -1,5 +1,8 @@
 #include "RenderEntity.h"
 
+#include <OgreAny.h>
+#include <OgreUserObjectBindings.h>
+
 RenderEntity::RenderEntity(Ogre::SceneNode* pRootNode, Ogre::SceneManager* pSceneMgr)
 	: m_pEntityNode(pRootNode->createChildSceneNode())
 	, m_pSceneMgr(pSceneMgr)
@@ -33,4 +36,9 @@ void RenderEntity::updateDirection(const Ogre::Quaternion &direction) {
 
 void RenderEntity::updatePosition(const Ogre::Vector3 &position) {
 	m_pEntityNode->setPosition(position);
+}
+
+void RenderEntity::addInterEntity(InterEntity* interEnt) {
+	Ogre::UserObjectBindings b = m_pEntity->getUserObjectBindings();
+	b.setUserAny(Ogre::Any(interEnt));
 }

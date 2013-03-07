@@ -1,5 +1,7 @@
 #pragma once
 
+#include "InterEntity.h"
+
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 #include <OgreQuaternion.h>
@@ -18,6 +20,8 @@ public:
 
 	void updateDirection(const Ogre::Quaternion &direction);
 	void updatePosition(const Ogre::Vector3 &position);
+
+	void addInterEntity(InterEntity* interEnt);
 
 private:
 	Ogre::SceneNode* m_pEntityNode;
